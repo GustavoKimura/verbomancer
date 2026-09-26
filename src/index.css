@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@theme {
+  --font-pixel: "Pixelify Sans", monospace;
+  --color-arcane-abyss: #100e17;
+  --color-arcane-surface: #181524;
+  --color-arcane-card: #221e33;
+  --color-arcane-border: #3b3558;
+  --color-arcane-text: #f3efff;
+  --color-arcane-muted: #8e88ab;
+  --color-arcane-right: #10b981;
+  --color-arcane-place: #f59e0b;
+  --color-arcane-wrong: #2c273d;
+  --color-arcane-wrong-fg: #5a5375;
+  --color-arcane-accent: #8b5cf6;
+  --breakpoint-desktop: 1024px;
+}
+
+:root {
+  --inset: env(safe-area-inset-top, 0px);
+}
+
+* {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Pixelify Sans', monospace;
+  background-color: #100e17;
+  color: #f3efff;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3b3558;
+  border-radius: 3px;
+}

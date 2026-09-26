@@ -1,0 +1,72 @@
+import { useState } from 'react';
+import type { GameMode } from './types/game';
+import { Sparkles, HelpCircle, BarChart2 } from 'lucide-react';
+
+export const App = () => {
+  const [currentMode, setCurrentMode] = useState<GameMode>('termo');
+
+  return (
+    <div className="flex flex-col h-full w-full max-w-[720px] mx-auto desktop:max-w-[1440px] px-2 py-1 justify-between items-center box-border">
+      <header className="w-full flex items-center justify-between border-b border-arcane-border py-2 px-4 max-w-[720px]">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-6 h-6 text-arcane-accent animate-pulse" />
+          <h1 className="text-2xl font-bold tracking-wider text-arcane-text uppercase">
+            Verbomancer
+          </h1>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            aria-label="Estatísticas"
+            className="p-1 rounded text-arcane-muted hover:text-arcane-text hover:bg-arcane-surface transition-colors"
+          >
+            <BarChart2 className="w-6 h-6" />
+          </button>
+          <button
+            type="button"
+            aria-label="Ajuda"
+            className="p-1 rounded text-arcane-muted hover:text-arcane-text hover:bg-arcane-surface transition-colors"
+          >
+            <HelpCircle className="w-6 h-6" />
+          </button>
+        </div>
+      </header>
+
+      <nav className="w-full max-w-[720px] flex justify-center gap-2 my-2">
+        {(['termo', 'dueto', 'quarteto'] as GameMode[]).map((mode) => (
+          <button
+            key={mode}
+            type="button"
+            onClick={() => setCurrentMode(mode)}
+            className={`px-4 py-1.5 rounded text-sm uppercase tracking-wide border transition-all ${currentMode === mode
+              ? 'bg-arcane-accent border-arcane-accent text-white shadow-lg shadow-arcane-accent/30'
+              : 'bg-arcane-surface border-arcane-border text-arcane-muted hover:text-arcane-text'
+              }`}
+          >
+            {mode}
+          </button>
+        ))}
+      </nav>
+
+      <main className="flex-1 w-full flex items-center justify-center p-2">
+        <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-arcane-border rounded-lg bg-arcane-surface/40 text-center max-w-sm">
+          <span className="text-xs uppercase tracking-widest text-arcane-accent mb-2">
+            Modo Selecionado
+          </span>
+          <p className="text-xl font-bold text-arcane-text uppercase mb-2">
+            {currentMode}
+          </p>
+          <p className="text-xs text-arcane-muted">
+            Base do projeto estabelecida. Pronto para a implementação do motor das palavras e tabuleiros.
+          </p>
+        </div>
+      </main>
+
+      <footer className="w-full max-w-[720px] py-2 text-center text-xs text-arcane-muted border-t border-arcane-border/50">
+        Verbomancer &copy; {new Date().getFullYear()} — Grimório Lexical
+      </footer>
+    </div>
+  );
+};
+
+export default App;
