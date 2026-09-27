@@ -60,9 +60,9 @@ export const Board = ({
 
     return (
         <div
-            className={`flex flex-col gap-1 p-1 sm:p-2 rounded-lg border transition-all ${isLocked
-                ? 'border-arcane-right/60 bg-arcane-card/40 shadow-[0_0_15px_rgba(0,230,118,0.15)]'
-                : 'border-arcane-border bg-arcane-surface/60'
+            className={`flex flex-col gap-1.5 sm:gap-2 p-1.5 sm:p-2.5 rounded-lg border transition-all ${isLocked
+                    ? 'border-arcane-right/60 bg-arcane-card/40 shadow-[0_0_15px_rgba(4,136,83,0.2)]'
+                    : 'border-arcane-border bg-arcane-surface/60'
                 }`}
         >
             {rows}

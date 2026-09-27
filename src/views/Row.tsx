@@ -37,7 +37,7 @@ export const Row = ({
     });
 
     return (
-        <div className={`flex gap-1 justify-center ${isShaking ? 'animate-row-shake' : ''}`}>
+        <div className={`flex gap-1.5 sm:gap-2 justify-center ${isShaking ? 'animate-row-shake' : ''}`}>
             {letters.map((tileData, index) => (
                 <Tile
                     key={index}
