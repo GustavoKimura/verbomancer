@@ -1,6 +1,6 @@
 import { Modal } from './Modal';
 import { GAME_CONFIG } from '../config/game.config';
-import { Skull, ShieldCheck, GitFork, Coffee, ExternalLink } from 'lucide-react';
+import { Skull, ShieldCheck, GitFork, Coffee, ExternalLink, Building2 } from 'lucide-react';
 
 interface AboutModalProps {
     isOpen: boolean;
@@ -23,6 +23,25 @@ export const AboutModal = ({ isOpen, onClose, onOpenSupport }: AboutModalProps) 
 
             <div className="border-t border-arcane-border/60 pt-3 space-y-2 text-xs sm:text-sm">
                 <div className="flex items-center gap-2 text-white font-bold uppercase tracking-wider">
+                    <Building2 className="w-5 h-5 text-arcane-place" />
+                    <h4>DESENVOLVIMENTO & AUTORIA</h4>
+                </div>
+                <p className="text-arcane-muted">
+                    Criado e mantido por <strong className="text-white">{GAME_CONFIG.company}</strong>.
+                </p>
+                <a
+                    href={GAME_CONFIG.authorGithubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-arcane-accent hover:underline font-bold"
+                >
+                    <span>Perfil de Gustavo Kimura no GitHub</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+            </div>
+
+            <div className="border-t border-arcane-border/60 pt-3 space-y-2 text-xs sm:text-sm">
+                <div className="flex items-center gap-2 text-white font-bold uppercase tracking-wider">
                     <GitFork className="w-5 h-5 text-arcane-accent" />
                     <h4>CÓDIGO ABERTO & FORK</h4>
                 </div>
@@ -35,7 +54,7 @@ export const AboutModal = ({ isOpen, onClose, onOpenSupport }: AboutModalProps) 
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 text-arcane-accent hover:underline font-bold"
                 >
-                    <span>Acessar repositório no GitHub</span>
+                    <span>Repositório oficial no GitHub</span>
                     <ExternalLink className="w-3.5 h-3.5" />
                 </a>
             </div>
@@ -49,7 +68,7 @@ export const AboutModal = ({ isOpen, onClose, onOpenSupport }: AboutModalProps) 
                     O VERBOMANCER não coleta nenhum dado pessoal ou identificador do usuário.
                 </p>
                 <p className="text-arcane-muted">
-                    O jogo não utiliza cookies de rastreamento, não executa serviços de telemetria e armazena o progresso dos rituais exclusivamente no navegador local do seu dispositivo.
+                    O jogo não utiliza cookies de rastreamento, não executa telemetria e armazena o progresso dos rituais exclusivamente no navegador local do seu dispositivo.
                 </p>
             </div>
 

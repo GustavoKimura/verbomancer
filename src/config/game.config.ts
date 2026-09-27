@@ -11,7 +11,9 @@ export const GAME_CONFIG = {
     wordLength: 5,
     lexiconCdnUrl: 'https://cdn.jsdelivr.net/gh/fserb/pt-br@master/lexico',
     lexiconFallbackUrl: 'https://raw.githubusercontent.com/fserb/pt-br/master/lexico',
-    githubUrl: 'https://github.com/seu-usuario/verbomancer',
+    githubUrl: 'https://github.com/GustavoKimura/verbomancer',
+    authorGithubUrl: 'https://github.com/GustavoKimura',
+    company: 'Kimura Dev, uma microagência de Gustavo Kimura',
     pixKey: '00.000.000/0001-00',
     messages: {
         insufficientLetters: 'o encanto exige 5 runas',
