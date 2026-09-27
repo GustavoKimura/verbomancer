@@ -82,8 +82,8 @@ export const App = () => {
                 setCurrentMode(modeKey);
               }}
               className={`flex-1 sm:flex-initial text-center px-3 sm:px-6 py-2 sm:py-2.5 rounded font-bold text-xs sm:text-sm md:text-base tracking-wider sm:tracking-widest border transition-all cursor-pointer ${currentMode === modeKey
-                  ? 'bg-arcane-accent border-arcane-accent text-white shadow-[0_0_15px_rgba(199,125,255,0.5)] scale-105'
-                  : 'bg-arcane-surface border-arcane-border text-white hover:border-arcane-accent/60'
+                ? 'bg-arcane-accent border-arcane-accent text-white shadow-[0_0_15px_rgba(199,125,255,0.5)] scale-105'
+                : 'bg-arcane-surface border-arcane-border text-white hover:border-arcane-accent/60'
                 }`}
             >
               {modeItem.name}
@@ -118,7 +118,7 @@ export const App = () => {
           onKeyPress={game.handleKeyPress}
         />
         <div className="w-full max-w-[840px] py-2 text-center text-xs sm:text-sm md:text-base font-bold tracking-widest text-arcane-muted border-t border-arcane-border/50 uppercase">
-          Verbomancer — Ritual do Dia #{game.dayNumber}
+          VERBOMANCER — Ritual do Dia #{game.dayNumber}
         </div>
       </footer>
     </div>
