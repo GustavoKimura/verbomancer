@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import type { GameMode, BoardState, KeyBoardStatusMulti, LetterStatus } from '../types/game';
+import type { GameMode, BoardState, KeyBoardStatusMulti, LetterStatus, GameStats } from '../types/game';
 import { GAME_CONFIG } from '../config/game.config';
 import { getDailyNumber } from '../services/daily';
 import { wordService, normalizeWord } from '../services/wordService';
 import { evaluateGuess } from '../services/evaluator';
 import { loadGameProgress, saveGameProgress } from '../services/storage';
+import { statsService } from '../services/statsService';
 
 export const useGameViewModel = (mode: GameMode) => {
     const [dayNumber, setDayNumber] = useState<number>(() => getDailyNumber());
@@ -14,6 +15,7 @@ export const useGameViewModel = (mode: GameMode) => {
     const [notification, setNotification] = useState<string | null>(null);
     const [isShaking, setIsShaking] = useState<boolean>(false);
     const [animatingRowIndex, setAnimatingRowIndex] = useState<number | null>(null);
+    const [stats, setStats] = useState<GameStats>(() => statsService.getStats(mode));
 
     const [guessesByMode, setGuessesByMode] = useState<Record<GameMode, string[]>>(() => ({
         espectro: loadGameProgress('espectro', getDailyNumber()),
@@ -44,6 +46,7 @@ export const useGameViewModel = (mode: GameMode) => {
         setCursorIndex(0);
         setNotification(null);
         setAnimatingRowIndex(null);
+        setStats(statsService.getStats(mode));
     }, [mode]);
 
     useEffect(() => {
@@ -109,6 +112,13 @@ export const useGameViewModel = (mode: GameMode) => {
         if (boards.length === 0) return false;
         return boards.every((b) => b.isSolved);
     }, [boards]);
+
+    useEffect(() => {
+        if (isGameOver && isReady) {
+            const updated = statsService.recordGameEnd(mode, dayNumber, isGameWon, guesses.length);
+            setStats(updated);
+        }
+    }, [isGameOver, isReady, mode, dayNumber, isGameWon, guesses.length]);
 
     const triggerShake = useCallback(() => {
         setIsShaking(true);
@@ -333,6 +343,7 @@ export const useGameViewModel = (mode: GameMode) => {
         notification,
         isShaking,
         animatingRowIndex,
+        stats,
         keyboardMultiStatuses,
         handleKeyPress,
         handleTileClick,

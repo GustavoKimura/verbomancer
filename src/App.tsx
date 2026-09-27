@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { GameMode } from './types/game';
 import { GAME_CONFIG } from './config/game.config';
 import { Skull, HelpCircle, BarChart2 } from 'lucide-react';
@@ -9,11 +9,21 @@ import { Notification } from './views/Notification';
 import { HelpModal } from './views/HelpModal';
 import { AboutModal } from './views/AboutModal';
 import { SupportModal } from './views/SupportModal';
+import { StatsModal } from './views/StatsModal';
 
 export const App = () => {
   const [currentMode, setCurrentMode] = useState<GameMode>('espectro');
-  const [activeModal, setActiveModal] = useState<'help' | 'about' | 'support' | null>('help');
+  const [activeModal, setActiveModal] = useState<'help' | 'about' | 'support' | 'stats' | null>('help');
   const game = useGameViewModel(currentMode);
+
+  useEffect(() => {
+    if (game.isGameOver && game.isReady) {
+      const timer = setTimeout(() => {
+        setActiveModal('stats');
+      }, 1400);
+      return () => clearTimeout(timer);
+    }
+  }, [game.isGameOver, game.isReady]);
 
   if (!game.isReady) {
     return (
@@ -57,6 +67,17 @@ export const App = () => {
         onOpenSupport={() => setActiveModal('support')}
       />
       <SupportModal isOpen={activeModal === 'support'} onClose={() => setActiveModal(null)} />
+      <StatsModal
+        isOpen={activeModal === 'stats'}
+        onClose={() => setActiveModal(null)}
+        stats={game.stats}
+        mode={currentMode}
+        dayNumber={game.dayNumber}
+        boards={game.boards}
+        guesses={game.guesses}
+        isGameOver={game.isGameOver}
+        isGameWon={game.isGameWon}
+      />
 
       <header className="w-full grid grid-cols-[auto_1fr_auto] items-center border-b border-arcane-border pb-3 px-3 sm:px-4 max-w-[840px] shrink-0">
         <div className="flex items-center gap-2">
@@ -72,7 +93,10 @@ export const App = () => {
           <button
             type="button"
             aria-label="Estatísticas"
-            onClick={(e) => e.currentTarget.blur()}
+            onClick={(e) => {
+              e.currentTarget.blur();
+              setActiveModal('stats');
+            }}
             className="p-1 sm:p-1.5 rounded text-arcane-muted hover:text-arcane-text hover:bg-arcane-surface transition-colors cursor-pointer"
           >
             <BarChart2 className="w-6 h-6 sm:w-7 sm:h-7" />
@@ -103,8 +127,8 @@ export const App = () => {
                 setCurrentMode(modeKey);
               }}
               className={`flex-1 sm:flex-initial text-center px-3 sm:px-6 py-2 sm:py-2.5 rounded font-bold text-xs sm:text-sm md:text-base tracking-wider sm:tracking-widest border transition-all cursor-pointer ${currentMode === modeKey
-                ? 'bg-arcane-accent border-arcane-accent text-white shadow-[0_0_15px_rgba(199,125,255,0.5)] scale-105'
-                : 'bg-arcane-surface border-arcane-border text-white hover:border-arcane-accent/60'
+                  ? 'bg-arcane-accent border-arcane-accent text-white shadow-[0_0_15px_rgba(199,125,255,0.5)] scale-105'
+                  : 'bg-arcane-surface border-arcane-border text-white hover:border-arcane-accent/60'
                 }`}
             >
               {modeItem.name}

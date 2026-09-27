@@ -21,3 +21,12 @@ export interface BoardState {
 export interface KeyBoardStatusMulti {
     [key: string]: LetterStatus[];
 }
+
+export interface GameStats {
+    played: number;
+    wins: number;
+    currentStreak: number;
+    maxStreak: number;
+    distribution: Record<number, number>;
+    lastRecordedDay?: number;
+}
