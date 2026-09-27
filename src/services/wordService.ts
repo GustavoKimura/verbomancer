@@ -117,35 +117,7 @@ class WordService {
         return this.originalMap.get(normalized) || normalized;
     }
 
-    public getDailyWords(mode: GameMode, dayNumber: number): string[] {
-        const config = GAME_CONFIG.modes[mode];
-        const wordsNeeded = config.boardsCount;
-
-        const envMap: Record<GameMode, string | undefined> = {
-            espectro: import.meta.env.VITE_OVERRIDE_ESPECTRO,
-            sombras: import.meta.env.VITE_OVERRIDE_SOMBRAS,
-            catacumba: import.meta.env.VITE_OVERRIDE_CATACUMBA,
-        };
-
-        const envValue = envMap[mode];
-        if (envValue && envValue.trim()) {
-            const parsed = envValue
-                .split(',')
-                .map((w) => w.trim().toUpperCase())
-                .filter((w) => w.length === GAME_CONFIG.wordLength);
-
-            if (parsed.length === wordsNeeded) {
-                parsed.forEach((w) => {
-                    const norm = normalizeWord(w);
-                    this.dictionarySet.add(norm);
-                    if (!this.originalMap.has(norm)) {
-                        this.originalMap.set(norm, w);
-                    }
-                });
-                return parsed;
-            }
-        }
-
+    private generateDynamicWords(dayNumber: number, wordsNeeded: number): string[] {
         if (this.targets.length === 0) {
             return Array(wordsNeeded).fill('CARRO');
         }
@@ -183,6 +155,44 @@ class WordService {
         }
 
         return selected;
+    }
+
+    public getDailyWords(mode: GameMode, dayNumber: number): string[] {
+        const config = GAME_CONFIG.modes[mode];
+        const wordsNeeded = config.boardsCount;
+
+        const dynamicWords = this.generateDynamicWords(dayNumber, wordsNeeded);
+        const finalWords = [...dynamicWords];
+
+        const positionalEnvMap: Record<GameMode, (string | undefined)[]> = {
+            espectro: [import.meta.env.VITE_OVERRIDE_ESPECTRO_1],
+            sombras: [
+                import.meta.env.VITE_OVERRIDE_SOMBRAS_1,
+                import.meta.env.VITE_OVERRIDE_SOMBRAS_2,
+            ],
+            catacumba: [
+                import.meta.env.VITE_OVERRIDE_CATACUMBA_1,
+                import.meta.env.VITE_OVERRIDE_CATACUMBA_2,
+                import.meta.env.VITE_OVERRIDE_CATACUMBA_3,
+                import.meta.env.VITE_OVERRIDE_CATACUMBA_4,
+            ],
+        };
+
+        for (let i = 0; i < wordsNeeded; i++) {
+            const candidate = positionalEnvMap[mode]?.[i]?.trim();
+
+            if (candidate && candidate.length === GAME_CONFIG.wordLength) {
+                const formatted = candidate.toUpperCase();
+                finalWords[i] = formatted;
+                const norm = normalizeWord(formatted);
+                this.dictionarySet.add(norm);
+                if (!this.originalMap.has(norm)) {
+                    this.originalMap.set(norm, formatted);
+                }
+            }
+        }
+
+        return finalWords;
     }
 }
 
