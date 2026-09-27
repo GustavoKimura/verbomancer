@@ -6,9 +6,12 @@ import { useGameViewModel } from './viewmodels/useGameViewModel';
 import { Board } from './views/Board';
 import { Keyboard } from './views/Keyboard';
 import { Notification } from './views/Notification';
+import { HelpModal } from './views/HelpModal';
+import { AboutModal } from './views/AboutModal';
 
 export const App = () => {
   const [currentMode, setCurrentMode] = useState<GameMode>('espectro');
+  const [activeModal, setActiveModal] = useState<'help' | 'about' | null>(null);
   const game = useGameViewModel(currentMode);
 
   if (!game.isReady) {
@@ -43,6 +46,9 @@ export const App = () => {
 
   return (
     <div className="flex flex-col h-[100dvh] w-full max-w-[960px] mx-auto px-2 pt-4 sm:pt-6 pb-2 justify-between items-center box-border overflow-hidden">
+      <HelpModal isOpen={activeModal === 'help'} onClose={() => setActiveModal(null)} />
+      <AboutModal isOpen={activeModal === 'about'} onClose={() => setActiveModal(null)} />
+
       <header className="w-full grid grid-cols-[auto_1fr_auto] items-center border-b border-arcane-border pb-3 px-3 sm:px-4 max-w-[840px] shrink-0">
         <div className="flex items-center">
           <Skull className="w-8 h-8 sm:w-9 sm:h-9 text-arcane-accent" />
@@ -62,7 +68,10 @@ export const App = () => {
           <button
             type="button"
             aria-label="Ajuda"
-            onClick={(e) => e.currentTarget.blur()}
+            onClick={(e) => {
+              e.currentTarget.blur();
+              setActiveModal('help');
+            }}
             className="p-1 sm:p-1.5 rounded text-arcane-muted hover:text-arcane-text hover:bg-arcane-surface transition-colors cursor-pointer"
           >
             <HelpCircle className="w-6 h-6 sm:w-7 sm:h-7" />
@@ -117,8 +126,18 @@ export const App = () => {
           boardsCount={GAME_CONFIG.modes[currentMode].boardsCount}
           onKeyPress={game.handleKeyPress}
         />
-        <div className="w-full max-w-[840px] py-2 text-center text-xs sm:text-sm md:text-base font-bold tracking-widest text-arcane-muted border-t border-arcane-border/50 uppercase">
-          VERBOMANCER — Ritual do Dia #{game.dayNumber}
+        <div className="w-full max-w-[840px] py-2 flex items-center justify-between px-3 text-xs sm:text-sm md:text-base font-bold tracking-widest text-arcane-muted border-t border-arcane-border/50 uppercase">
+          <span>VERBOMANCER — Ritual do Dia #{game.dayNumber}</span>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.currentTarget.blur();
+              setActiveModal('about');
+            }}
+            className="hover:text-white underline decoration-arcane-border underline-offset-4 cursor-pointer transition-colors"
+          >
+            SOBRE
+          </button>
         </div>
       </footer>
     </div>
