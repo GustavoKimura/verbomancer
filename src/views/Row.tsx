@@ -6,9 +6,10 @@ interface RowProps {
     evaluation?: EvaluatedLetter[];
     currentLetters?: string;
     mode: GameMode;
+    isShaking?: boolean;
 }
 
-export const Row = ({ evaluation, currentLetters, mode }: RowProps) => {
+export const Row = ({ evaluation, currentLetters, mode, isShaking = false }: RowProps) => {
     const letters = Array.from({ length: 5 }, (_, i) => {
         if (evaluation) {
             return evaluation[i] || { letter: '', status: 'empty' };
@@ -26,13 +27,15 @@ export const Row = ({ evaluation, currentLetters, mode }: RowProps) => {
     });
 
     return (
-        <div className="flex gap-1 justify-center">
+        <div className={`flex gap-1 justify-center ${isShaking ? 'animate-row-shake' : ''}`}>
             {letters.map((tileData, index) => (
                 <Tile
                     key={index}
                     letter={tileData.letter}
                     status={tileData.status}
                     mode={mode}
+                    isRevealing={!!evaluation}
+                    revealIndex={index}
                 />
             ))}
         </div>

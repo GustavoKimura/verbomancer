@@ -1,4 +1,4 @@
-export type GameMode = 'termo' | 'dueto' | 'quarteto';
+export type GameMode = 'sigilo' | 'dualidade' | 'cataclisma';
 
 export type LetterStatus = 'empty' | 'tbd' | 'wrong' | 'place' | 'right';
 
@@ -18,6 +18,6 @@ export interface BoardState {
     isFailed: boolean;
 }
 
-export interface KeyStatusMap {
-    [key: string]: LetterStatus;
+export interface KeyBoardStatusMulti {
+    [key: string]: LetterStatus[];
 }

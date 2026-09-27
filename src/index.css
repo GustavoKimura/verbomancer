@@ -2,17 +2,17 @@
 
 @theme {
   --font-pixel: "Pixelify Sans", monospace;
-  --color-arcane-abyss: #100e17;
-  --color-arcane-surface: #181524;
-  --color-arcane-card: #221e33;
-  --color-arcane-border: #3b3558;
-  --color-arcane-text: #f3efff;
-  --color-arcane-muted: #8e88ab;
-  --color-arcane-right: #10b981;
-  --color-arcane-place: #f59e0b;
-  --color-arcane-wrong: #2c273d;
-  --color-arcane-wrong-fg: #5a5375;
-  --color-arcane-accent: #8b5cf6;
+  --color-arcane-abyss: #0a0812;
+  --color-arcane-surface: #151122;
+  --color-arcane-card: #201933;
+  --color-arcane-border: #3d3257;
+  --color-arcane-text: #f7f4ff;
+  --color-arcane-muted: #8e82aa;
+  --color-arcane-right: #00e676;
+  --color-arcane-place: #ffb703;
+  --color-arcane-wrong: #1c1829;
+  --color-arcane-wrong-fg: #5c5470;
+  --color-arcane-accent: #c77dff;
   --breakpoint-desktop: 1024px;
 }
 
@@ -26,6 +26,10 @@
   user-select: none;
 }
 
+button {
+  cursor: pointer;
+}
+
 html,
 body,
 #root {
@@ -34,8 +38,8 @@ body,
   margin: 0;
   padding: 0;
   font-family: 'Pixelify Sans', monospace;
-  background-color: #100e17;
-  color: #f3efff;
+  background-color: #0a0812;
+  color: #f7f4ff;
 }
 
 ::-webkit-scrollbar {
@@ -48,6 +52,60 @@ body,
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3b3558;
+  background: #3d3257;
   border-radius: 3px;
+}
+
+@keyframes tile-pop {
+  0% {
+    transform: scale(0.85);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes tile-flip {
+  0% {
+    transform: rotateX(0deg);
+  }
+
+  50% {
+    transform: rotateX(90deg);
+  }
+
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+
+@keyframes row-shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+
+.animate-tile-pop {
+  animation: tile-pop 0.15s ease-out;
+}
+
+.animate-row-shake {
+  animation: row-shake 0.4s ease-in-out;
 }

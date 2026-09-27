@@ -1,5 +1,5 @@
 import type { EvaluatedLetter, LetterStatus } from '../types/game';
-import { getOriginalSpelling, normalizeWord } from './wordList';
+import { wordService } from './wordService';
 
 export const evaluateGuess = (
     guessNormalized: string,
@@ -48,7 +48,7 @@ export const evaluateGuess = (
             result[i].letter = targetOriginal[i];
         }
     } else {
-        const originalGuess = getOriginalSpelling(guessNormalized);
+        const originalGuess = wordService.getOriginalSpelling(guessNormalized);
         for (let i = 0; i < 5; i++) {
             result[i].letter = originalGuess[i] || guessNormalized[i];
         }
