@@ -24,7 +24,7 @@ export const Tile = ({
             case 'right':
                 return 'bg-arcane-right border-arcane-right text-arcane-text shadow-[0_0_12px_rgba(4,136,83,0.6)]';
             case 'place':
-                return 'bg-arcane-place border-arcane-place text-arcane-text shadow-[0_0_12px_rgba(217,119,6,0.6)]';
+                return 'bg-arcane-place border-arcane-place text-arcane-abyss font-bold shadow-[0_0_12px_rgba(234,179,8,0.6)]';
             case 'wrong':
                 return 'bg-arcane-wrong border-arcane-wrong text-arcane-wrong-fg opacity-70';
             case 'tbd':

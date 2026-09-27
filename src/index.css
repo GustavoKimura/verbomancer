@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --font-pixel: "Silkscreen", monospace;
+  --font-pixel: "DotGothic16", monospace;
   --color-arcane-abyss: #0a0812;
   --color-arcane-surface: #151122;
   --color-arcane-card: #201933;
@@ -9,7 +9,7 @@
   --color-arcane-text: #ffffff;
   --color-arcane-muted: #8e82aa;
   --color-arcane-right: #048853;
-  --color-arcane-place: #d97706;
+  --color-arcane-place: #eab308;
   --color-arcane-wrong: #1c1829;
   --color-arcane-wrong-fg: #5c5470;
   --color-arcane-accent: #c77dff;
@@ -37,7 +37,7 @@ body,
   width: 100%;
   margin: 0;
   padding: 0;
-  font-family: 'Silkscreen', monospace;
+  font-family: 'DotGothic16', monospace;
   background-color: #0a0812;
   color: #ffffff;
 }

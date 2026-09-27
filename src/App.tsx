@@ -28,34 +28,34 @@ export const App = () => {
     <div className="flex flex-col h-[100dvh] w-full max-w-[960px] mx-auto px-2 pt-5 sm:pt-7 pb-2 justify-between items-center box-border overflow-hidden">
       <Notification message={game.notification} />
 
-      <header className="w-full flex items-center justify-between border-b border-arcane-border pb-3 px-4 max-w-[840px] shrink-0">
-        <div className="flex items-center gap-3">
-          <Skull className="w-7 h-7 text-arcane-accent" />
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-widest text-arcane-text uppercase drop-shadow-[0_0_8px_rgba(199,125,255,0.4)]">
-            VERBOMANCER — {activeModeName}
-          </h1>
+      <header className="w-full grid grid-cols-[auto_1fr_auto] items-center border-b border-arcane-border pb-3 px-3 sm:px-4 max-w-[840px] shrink-0">
+        <div className="flex items-center">
+          <Skull className="w-5 h-5 sm:w-6 sm:h-6 text-arcane-accent" />
         </div>
-        <div className="flex items-center gap-3">
+        <h1 className="text-center text-sm sm:text-base md:text-lg font-bold tracking-widest text-arcane-text uppercase truncate px-2 drop-shadow-[0_0_8px_rgba(199,125,255,0.4)]">
+          VERBOMANCER — {activeModeName}
+        </h1>
+        <div className="flex items-center gap-2 sm:gap-3 justify-end">
           <button
             type="button"
             aria-label="Estatísticas"
             onClick={(e) => e.currentTarget.blur()}
-            className="p-1.5 rounded text-arcane-muted hover:text-arcane-text hover:bg-arcane-surface transition-colors cursor-pointer"
+            className="p-1 sm:p-1.5 rounded text-arcane-muted hover:text-arcane-text hover:bg-arcane-surface transition-colors cursor-pointer"
           >
-            <BarChart2 className="w-6 h-6" />
+            <BarChart2 className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
           <button
             type="button"
             aria-label="Ajuda"
             onClick={(e) => e.currentTarget.blur()}
-            className="p-1.5 rounded text-arcane-muted hover:text-arcane-text hover:bg-arcane-surface transition-colors cursor-pointer"
+            className="p-1 sm:p-1.5 rounded text-arcane-muted hover:text-arcane-text hover:bg-arcane-surface transition-colors cursor-pointer"
           >
-            <HelpCircle className="w-6 h-6" />
+            <HelpCircle className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
         </div>
       </header>
 
-      <nav className="w-full max-w-[840px] flex justify-center gap-3 sm:gap-5 my-2 shrink-0">
+      <nav className="w-full max-w-[840px] px-2 flex justify-center gap-1.5 sm:gap-4 my-2 shrink-0">
         {(Object.keys(GAME_CONFIG.modes) as GameMode[]).map((modeKey) => {
           const modeItem = GAME_CONFIG.modes[modeKey];
           return (
@@ -66,9 +66,9 @@ export const App = () => {
                 e.currentTarget.blur();
                 setCurrentMode(modeKey);
               }}
-              className={`px-5 py-2 rounded font-bold text-sm uppercase tracking-widest border transition-all cursor-pointer ${currentMode === modeKey
-                ? 'bg-arcane-accent border-arcane-accent text-white shadow-[0_0_15px_rgba(199,125,255,0.5)] scale-105'
-                : 'bg-arcane-surface border-arcane-border text-white hover:border-arcane-accent/60'
+              className={`flex-1 sm:flex-initial text-center px-2.5 sm:px-5 py-1.5 sm:py-2 rounded font-bold text-xs sm:text-sm tracking-wider sm:tracking-widest border transition-all cursor-pointer ${currentMode === modeKey
+                  ? 'bg-arcane-accent border-arcane-accent text-white shadow-[0_0_15px_rgba(199,125,255,0.5)] scale-105'
+                  : 'bg-arcane-surface border-arcane-border text-white hover:border-arcane-accent/60'
                 }`}
             >
               {modeItem.name}
