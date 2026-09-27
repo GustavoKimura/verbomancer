@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import type { GameMode, BoardState, KeyBoardStatusMulti, LetterStatus, GameStats } from '../types/game';
 import { GAME_CONFIG } from '../config/game.config';
 import { getDailyNumber } from '../services/daily';
@@ -16,6 +16,8 @@ export const useGameViewModel = (mode: GameMode) => {
     const [isShaking, setIsShaking] = useState<boolean>(false);
     const [animatingRowIndex, setAnimatingRowIndex] = useState<number | null>(null);
     const [stats, setStats] = useState<GameStats>(() => statsService.getStats(mode));
+    const [shouldOpenStats, setShouldOpenStats] = useState<boolean>(false);
+    const endTimerRef = useRef<number | null>(null);
 
     const [guessesByMode, setGuessesByMode] = useState<Record<GameMode, string[]>>(() => ({
         espectro: loadGameProgress('espectro', getDailyNumber()),
@@ -42,10 +44,15 @@ export const useGameViewModel = (mode: GameMode) => {
     }, []);
 
     useEffect(() => {
+        if (endTimerRef.current) {
+            clearTimeout(endTimerRef.current);
+            endTimerRef.current = null;
+        }
         setCurrentLetters(['', '', '', '', '']);
         setCursorIndex(0);
         setNotification(null);
         setAnimatingRowIndex(null);
+        setShouldOpenStats(false);
         setStats(statsService.getStats(mode));
     }, [mode]);
 
@@ -137,6 +144,10 @@ export const useGameViewModel = (mode: GameMode) => {
         return currentLetters.join('');
     }, [currentLetters]);
 
+    const consumeStatsOpen = useCallback(() => {
+        setShouldOpenStats(false);
+    }, []);
+
     const submitGuess = useCallback(() => {
         if (isGameOver || !isReady) return;
 
@@ -170,10 +181,18 @@ export const useGameViewModel = (mode: GameMode) => {
             return b.isSolved || normalizedGuess === b.targetNormalized;
         });
 
+        const isFinished = willBeSolved || nextGuesses.length >= config.maxRows;
+
         if (willBeSolved) {
             showNotification(GAME_CONFIG.messages.victory);
         } else if (nextGuesses.length >= config.maxRows) {
             showNotification(GAME_CONFIG.messages.defeat);
+        }
+
+        if (isFinished) {
+            endTimerRef.current = window.setTimeout(() => {
+                setShouldOpenStats(true);
+            }, 1400);
         }
 
         setTimeout(() => {
@@ -344,6 +363,8 @@ export const useGameViewModel = (mode: GameMode) => {
         isShaking,
         animatingRowIndex,
         stats,
+        shouldOpenStats,
+        consumeStatsOpen,
         keyboardMultiStatuses,
         handleKeyPress,
         handleTileClick,

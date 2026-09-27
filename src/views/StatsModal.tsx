@@ -3,7 +3,7 @@ import { Modal } from './Modal';
 import { GAME_CONFIG } from '../config/game.config';
 import type { BoardState, GameMode, GameStats } from '../types/game';
 import { evaluateGuess } from '../services/evaluator';
-import { Share2, Check, Clock, Trophy, Flame } from 'lucide-react';
+import { Share2, Check, Clock, Trophy, Flame, Skull } from 'lucide-react';
 
 interface StatsModalProps {
     isOpen: boolean;
@@ -51,7 +51,8 @@ export const StatsModal = ({
 
     const config = GAME_CONFIG.modes[mode];
     const winPercentage = stats.played > 0 ? Math.round((stats.wins / stats.played) * 100) : 0;
-    const maxDistributionCount = Math.max(1, ...Object.values(stats.distribution));
+    const losses = Math.max(0, stats.played - stats.wins);
+    const maxDistributionCount = Math.max(1, ...Object.values(stats.distribution), losses);
 
     const handleShare = async () => {
         const title = `VERBOMANCER v${GAME_CONFIG.version} (${config.name}) #${dayNumber} ${isGameWon ? guesses.length : 'X'
@@ -169,11 +170,11 @@ export const StatsModal = ({
 
                         return (
                             <div key={row} className="flex items-center gap-2 text-xs font-mono">
-                                <span className="w-3 text-right text-arcane-muted font-bold">{row}</span>
+                                <span className="w-4 text-right text-arcane-muted font-bold">{row}</span>
                                 <div className="flex-1 bg-arcane-abyss rounded overflow-hidden h-5 flex items-center">
                                     <div
                                         style={{ width: `${percentage}%` }}
-                                        className={`h-full flex items-center justify-end px-2 font-bold text-white transition-all ${isCurrentWinRow ? 'bg-arcane-right' : 'bg-arcane-border'
+                                        className={`h-full flex items-center justify-end px-2 font-bold text-white transition-all ${isCurrentWinRow ? 'bg-arcane-right shadow-[0_0_10px_rgba(4,136,83,0.5)]' : 'bg-arcane-border'
                                             }`}
                                     >
                                         {count}
@@ -182,6 +183,21 @@ export const StatsModal = ({
                             </div>
                         );
                     })}
+
+                    <div className="flex items-center gap-2 text-xs font-mono">
+                        <div className="w-4 flex justify-end items-center">
+                            <Skull className="w-3.5 h-3.5 text-arcane-muted" />
+                        </div>
+                        <div className="flex-1 bg-arcane-abyss rounded overflow-hidden h-5 flex items-center">
+                            <div
+                                style={{ width: `${Math.max(8, Math.round((losses / maxDistributionCount) * 100))}%` }}
+                                className={`h-full flex items-center justify-end px-2 font-bold text-white transition-all ${isGameOver && !isGameWon ? 'bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.5)]' : 'bg-arcane-border'
+                                    }`}
+                            >
+                                {losses}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -199,8 +215,8 @@ export const StatsModal = ({
                         type="button"
                         onClick={handleShare}
                         className={`w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded font-bold text-xs sm:text-sm uppercase tracking-widest transition-all cursor-pointer ${copied
-                            ? 'bg-arcane-right text-white shadow-[0_0_12px_rgba(4,136,83,0.7)]'
-                            : 'bg-arcane-accent hover:brightness-110 text-white shadow-[0_0_15px_rgba(199,125,255,0.5)]'
+                                ? 'bg-arcane-right text-white shadow-[0_0_12px_rgba(4,136,83,0.7)]'
+                                : 'bg-arcane-accent hover:brightness-110 text-white shadow-[0_0_15px_rgba(199,125,255,0.5)]'
                             }`}
                     >
                         {copied ? (

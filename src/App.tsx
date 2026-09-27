@@ -17,13 +17,11 @@ export const App = () => {
   const game = useGameViewModel(currentMode);
 
   useEffect(() => {
-    if (game.isGameOver && game.isReady) {
-      const timer = setTimeout(() => {
-        setActiveModal('stats');
-      }, 1400);
-      return () => clearTimeout(timer);
+    if (game.shouldOpenStats) {
+      setActiveModal('stats');
+      game.consumeStatsOpen();
     }
-  }, [game.isGameOver, game.isReady]);
+  }, [game.shouldOpenStats, game]);
 
   if (!game.isReady) {
     return (
