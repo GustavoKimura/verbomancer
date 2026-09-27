@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Modal } from './Modal';
 import { GAME_CONFIG } from '../config/game.config';
-import { Coffee, Copy, Check, GitFork, ExternalLink, Building2 } from 'lucide-react';
+import { Coffee, Copy, Check, GitFork, ExternalLink, Key } from 'lucide-react';
 
 interface SupportModalProps {
     isOpen: boolean;
@@ -35,8 +35,8 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
 
             <div className="border-t border-arcane-border/60 pt-4 space-y-3">
                 <div className="flex items-center justify-center gap-2 text-white font-bold uppercase tracking-wider text-xs sm:text-sm text-center">
-                    <Building2 className="w-4 h-4 text-arcane-place" />
-                    <h4>CHAVE PIX CNPJ (KIMURA DEV)</h4>
+                    <Key className="w-4 h-4 text-arcane-place" />
+                    <h4>CHAVE PIX ALEATÓRIA</h4>
                 </div>
 
                 <div className="flex items-center justify-between p-2.5 sm:p-3 bg-arcane-abyss border-2 border-arcane-border rounded-lg">

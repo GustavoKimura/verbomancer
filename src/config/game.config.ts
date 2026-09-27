@@ -14,7 +14,7 @@ export const GAME_CONFIG = {
     githubUrl: 'https://github.com/GustavoKimura/verbomancer',
     authorGithubUrl: 'https://github.com/GustavoKimura',
     company: 'Kimura Dev, uma microagência de Gustavo Kimura',
-    pixKey: '00.000.000/0001-00',
+    pixKey: '28c1ee5c-e637-4349-b90e-378852716505',
     messages: {
         insufficientLetters: 'o encanto exige 5 runas',
         wordNotFound: 'o abismo rejeita este vocábulo',

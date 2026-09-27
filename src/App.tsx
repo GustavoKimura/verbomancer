@@ -151,7 +151,7 @@ export const App = () => {
               }}
               className="text-arcane-place hover:text-white underline decoration-arcane-border underline-offset-4 cursor-pointer transition-colors"
             >
-              CAFÉ (PIX)
+              CAFÉ? (PIX)
             </button>
             <a
               href={GAME_CONFIG.githubUrl}
