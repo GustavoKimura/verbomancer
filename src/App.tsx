@@ -1,17 +1,33 @@
 import { useState } from 'react';
 import type { GameMode } from './types/game';
 import { GAME_CONFIG } from './config/game.config';
-import { Skull, HelpCircle, BarChart2 } from 'lucide-react';
+import { Skull, HelpCircle, BarChart2, Coffee } from 'lucide-react';
 import { useGameViewModel } from './viewmodels/useGameViewModel';
 import { Board } from './views/Board';
 import { Keyboard } from './views/Keyboard';
 import { Notification } from './views/Notification';
 import { HelpModal } from './views/HelpModal';
 import { AboutModal } from './views/AboutModal';
+import { SupportModal } from './views/SupportModal';
+
+const GithubIcon = ({ className = 'w-5 h-5 sm:w-6 sm:h-6' }: { className?: string }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+    <path d="M9 18c-4.51 2-5-2-7-2" />
+  </svg>
+);
 
 export const App = () => {
   const [currentMode, setCurrentMode] = useState<GameMode>('espectro');
-  const [activeModal, setActiveModal] = useState<'help' | 'about' | null>(null);
+  const [activeModal, setActiveModal] = useState<'help' | 'about' | 'support' | null>('help');
   const game = useGameViewModel(currentMode);
 
   if (!game.isReady) {
@@ -22,6 +38,9 @@ export const App = () => {
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-widest uppercase text-arcane-text">
             VERBOMANCER
           </h1>
+          <span className="text-xs sm:text-sm text-arcane-accent tracking-widest uppercase font-mono">
+            v{GAME_CONFIG.version}
+          </span>
           <div className="flex items-center gap-3 text-sm sm:text-base text-arcane-muted tracking-widest uppercase">
             <span className="inline-block w-2.5 h-2.5 rounded-full bg-arcane-accent animate-ping" />
             <span>DESPERTANDO O RITUAL...</span>
@@ -47,23 +66,51 @@ export const App = () => {
   return (
     <div className="flex flex-col h-[100dvh] w-full max-w-[960px] mx-auto px-2 pt-4 sm:pt-6 pb-2 justify-between items-center box-border overflow-hidden">
       <HelpModal isOpen={activeModal === 'help'} onClose={() => setActiveModal(null)} />
-      <AboutModal isOpen={activeModal === 'about'} onClose={() => setActiveModal(null)} />
+      <AboutModal
+        isOpen={activeModal === 'about'}
+        onClose={() => setActiveModal(null)}
+        onOpenSupport={() => setActiveModal('support')}
+      />
+      <SupportModal isOpen={activeModal === 'support'} onClose={() => setActiveModal(null)} />
 
       <header className="w-full grid grid-cols-[auto_1fr_auto] items-center border-b border-arcane-border pb-3 px-3 sm:px-4 max-w-[840px] shrink-0">
-        <div className="flex items-center">
-          <Skull className="w-8 h-8 sm:w-9 sm:h-9 text-arcane-accent" />
+        <div className="flex items-center gap-2">
+          <Skull className="w-7 h-7 sm:w-8 sm:h-8 text-arcane-accent" />
+          <span className="hidden sm:inline-block text-[10px] text-arcane-muted font-mono tracking-widest">
+            v{GAME_CONFIG.version}
+          </span>
         </div>
-        <h1 className="text-center text-base sm:text-lg md:text-xl font-bold tracking-widest text-arcane-text uppercase truncate px-2 drop-shadow-[0_0_8px_rgba(199,125,255,0.4)]">
+        <h1 className="text-center text-sm sm:text-base md:text-lg font-bold tracking-widest text-arcane-text uppercase truncate px-2 drop-shadow-[0_0_8px_rgba(199,125,255,0.4)]">
           VERBOMANCER — {activeModeName}
         </h1>
-        <div className="flex items-center gap-2 sm:gap-3 justify-end">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 justify-end">
+          <button
+            type="button"
+            aria-label="Me compra um café?"
+            onClick={(e) => {
+              e.currentTarget.blur();
+              setActiveModal('support');
+            }}
+            className="p-1 sm:p-1.5 rounded text-arcane-place hover:text-white hover:bg-arcane-surface transition-colors cursor-pointer"
+          >
+            <Coffee className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
+          <a
+            href={GAME_CONFIG.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Repositório no GitHub"
+            className="p-1 sm:p-1.5 rounded text-arcane-muted hover:text-white hover:bg-arcane-surface transition-colors cursor-pointer"
+          >
+            <GithubIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+          </a>
           <button
             type="button"
             aria-label="Estatísticas"
             onClick={(e) => e.currentTarget.blur()}
             className="p-1 sm:p-1.5 rounded text-arcane-muted hover:text-arcane-text hover:bg-arcane-surface transition-colors cursor-pointer"
           >
-            <BarChart2 className="w-6 h-6 sm:w-7 sm:h-7" />
+            <BarChart2 className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
           <button
             type="button"
@@ -126,18 +173,34 @@ export const App = () => {
           boardsCount={GAME_CONFIG.modes[currentMode].boardsCount}
           onKeyPress={game.handleKeyPress}
         />
-        <div className="w-full max-w-[840px] py-2 flex items-center justify-between px-3 text-xs sm:text-sm md:text-base font-bold tracking-widest text-arcane-muted border-t border-arcane-border/50 uppercase">
-          <span>VERBOMANCER — Ritual do Dia #{game.dayNumber}</span>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.currentTarget.blur();
-              setActiveModal('about');
-            }}
-            className="hover:text-white underline decoration-arcane-border underline-offset-4 cursor-pointer transition-colors"
-          >
-            SOBRE
-          </button>
+        <div className="w-full max-w-[840px] py-2 flex items-center justify-between px-3 text-[11px] sm:text-xs md:text-sm font-bold tracking-widest text-arcane-muted border-t border-arcane-border/50 uppercase">
+          <div className="flex items-center gap-2">
+            <span>VERBOMANCER v{GAME_CONFIG.version}</span>
+            <span>—</span>
+            <span>Rito #{game.dayNumber}</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.currentTarget.blur();
+                setActiveModal('support');
+              }}
+              className="text-arcane-place hover:text-white underline decoration-arcane-border underline-offset-4 cursor-pointer transition-colors"
+            >
+              CAFÉ (PIX)
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.currentTarget.blur();
+                setActiveModal('about');
+              }}
+              className="hover:text-white underline decoration-arcane-border underline-offset-4 cursor-pointer transition-colors"
+            >
+              SOBRE
+            </button>
+          </div>
         </div>
       </footer>
     </div>
