@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-  --font-pixel: "Pixelify Sans", monospace;
+  --font-pixel: "Silkscreen", monospace;
   --color-arcane-abyss: #0a0812;
   --color-arcane-surface: #151122;
   --color-arcane-card: #201933;
   --color-arcane-border: #3d3257;
-  --color-arcane-text: #f7f4ff;
+  --color-arcane-text: #ffffff;
   --color-arcane-muted: #8e82aa;
-  --color-arcane-right: #00e676;
-  --color-arcane-place: #ffb703;
+  --color-arcane-right: #048853;
+  --color-arcane-place: #d97706;
   --color-arcane-wrong: #1c1829;
   --color-arcane-wrong-fg: #5c5470;
   --color-arcane-accent: #c77dff;
@@ -37,14 +37,14 @@ body,
   width: 100%;
   margin: 0;
   padding: 0;
-  font-family: 'Pixelify Sans', monospace;
+  font-family: 'Silkscreen', monospace;
   background-color: #0a0812;
-  color: #f7f4ff;
+  color: #ffffff;
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -58,11 +58,11 @@ body,
 
 @keyframes tile-pop {
   0% {
-    transform: scale(0.85);
+    transform: scale(0.9);
   }
 
   50% {
-    transform: scale(1.1);
+    transform: scale(1.08);
   }
 
   100% {
@@ -93,19 +93,19 @@ body,
 
   20%,
   60% {
-    transform: translateX(-6px);
+    transform: translateX(-5px);
   }
 
   40%,
   80% {
-    transform: translateX(6px);
+    transform: translateX(5px);
   }
 }
 
 .animate-tile-pop {
-  animation: tile-pop 0.15s ease-out;
+  animation: tile-pop 0.12s ease-out;
 }
 
 .animate-row-shake {
-  animation: row-shake 0.4s ease-in-out;
+  animation: row-shake 0.35s ease-in-out;
 }

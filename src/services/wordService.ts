@@ -5,6 +5,7 @@ export const normalizeWord = (word: string): string => {
     return word
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[Çç]/g, 'C')
         .toUpperCase();
 };
 
@@ -21,7 +22,7 @@ class WordService {
 
         this.loadPromise = (async () => {
             const cached = this.loadFromStorage();
-            if (cached) {
+            if (cached && cached.length > 0) {
                 this.processWords(cached);
                 this.isLoaded = true;
                 return;
@@ -32,7 +33,8 @@ class WordService {
                 try {
                     const res = await fetch(GAME_CONFIG.lexiconCdnUrl);
                     if (res.ok) text = await res.text();
-                } catch {
+                } catch (err) {
+                    console.error(err);
                     const resFallback = await fetch(GAME_CONFIG.lexiconFallbackUrl);
                     if (resFallback.ok) text = await resFallback.text();
                 }
@@ -44,8 +46,8 @@ class WordService {
                     this.isLoaded = true;
                     return;
                 }
-            } catch {
-
+            } catch (err) {
+                console.error(err);
             }
 
             const emergencyWords = [
@@ -89,7 +91,8 @@ class WordService {
             if (raw) {
                 return JSON.parse(raw);
             }
-        } catch {
+        } catch (err) {
+            console.error(err);
             return null;
         }
         return null;
@@ -101,8 +104,8 @@ class WordService {
                 .map((w) => w.trim())
                 .filter((w) => w.length === GAME_CONFIG.wordLength);
             localStorage.setItem('verbomancer_lexicon_cache', JSON.stringify(fiveLetterOnly));
-        } catch {
-
+        } catch (err) {
+            console.error(err);
         }
     }
 

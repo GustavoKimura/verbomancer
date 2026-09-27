@@ -1,6 +1,5 @@
 import { Tile } from './Tile';
-import type { EvaluatedLetter } from '../types/game';
-import type { GameMode } from '../types/game';
+import type { EvaluatedLetter, GameMode } from '../types/game';
 
 interface RowProps {
     evaluation?: EvaluatedLetter[];
@@ -38,7 +37,7 @@ export const Row = ({
     });
 
     return (
-        <div className={`flex gap-1 sm:gap-1.5 justify-center ${isShaking ? 'animate-row-shake' : ''}`}>
+        <div className={`flex gap-1 justify-center ${isShaking ? 'animate-row-shake' : ''}`}>
             {letters.map((tileData, index) => (
                 <Tile
                     key={index}

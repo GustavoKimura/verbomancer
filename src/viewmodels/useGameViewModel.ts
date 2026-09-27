@@ -14,44 +14,54 @@ export const useGameViewModel = (mode: GameMode) => {
     const [notification, setNotification] = useState<string | null>(null);
     const [isShaking, setIsShaking] = useState<boolean>(false);
     const [animatingRowIndex, setAnimatingRowIndex] = useState<number | null>(null);
-    const [targetWords, setTargetWords] = useState<string[]>([]);
 
+    const [guessesByMode, setGuessesByMode] = useState<Record<GameMode, string[]>>(() => ({
+        espectro: loadGameProgress('espectro', getDailyNumber()),
+        sombras: loadGameProgress('sombras', getDailyNumber()),
+        catacumba: loadGameProgress('catacumba', getDailyNumber()),
+    }));
+
+    const guesses = guessesByMode[mode] || [];
     const config = GAME_CONFIG.modes[mode];
 
     useEffect(() => {
         let mounted = true;
         wordService.initialize().then(() => {
             if (mounted) {
-                setTargetWords(wordService.getDailyWords(mode, dayNumber));
                 setIsReady(true);
             }
         });
         return () => {
             mounted = false;
         };
-    }, [mode, dayNumber]);
+    }, []);
+
+    useEffect(() => {
+        setCurrentLetters(['', '', '', '', '']);
+        setCursorIndex(0);
+        setNotification(null);
+        setAnimatingRowIndex(null);
+    }, [mode]);
 
     useEffect(() => {
         const interval = setInterval(() => {
             const current = getDailyNumber();
             if (current !== dayNumber) {
                 setDayNumber(current);
+                setGuessesByMode({
+                    espectro: loadGameProgress('espectro', current),
+                    sombras: loadGameProgress('sombras', current),
+                    catacumba: loadGameProgress('catacumba', current),
+                });
             }
         }, 60000);
         return () => clearInterval(interval);
     }, [dayNumber]);
 
-    const [guesses, setGuesses] = useState<string[]>(() => {
-        return loadGameProgress(mode, dayNumber);
-    });
-
-    useEffect(() => {
-        setGuesses(loadGameProgress(mode, dayNumber));
-        setCurrentLetters(['', '', '', '', '']);
-        setCursorIndex(0);
-        setNotification(null);
-        setAnimatingRowIndex(null);
-    }, [mode, dayNumber]);
+    const targetWords = useMemo(() => {
+        if (!isReady) return [];
+        return wordService.getDailyWords(mode, dayNumber);
+    }, [mode, dayNumber, isReady]);
 
     const normalizedTargets = useMemo(() => {
         return targetWords.map(normalizeWord);
@@ -135,7 +145,10 @@ export const useGameViewModel = (mode: GameMode) => {
         setAnimatingRowIndex(newRowIndex);
 
         const nextGuesses = [...guesses, normalizedGuess];
-        setGuesses(nextGuesses);
+        setGuessesByMode((prev) => ({
+            ...prev,
+            [mode]: nextGuesses,
+        }));
         setCurrentLetters(['', '', '', '', '']);
         setCursorIndex(0);
         saveGameProgress(mode, dayNumber, nextGuesses);
@@ -152,7 +165,7 @@ export const useGameViewModel = (mode: GameMode) => {
 
         setTimeout(() => {
             setAnimatingRowIndex(null);
-        }, 1200);
+        }, 1000);
     }, [
         currentGuessString,
         isGameOver,
@@ -220,25 +233,35 @@ export const useGameViewModel = (mode: GameMode) => {
                 return;
             }
 
-            if (/^[A-Z]$/.test(upperKey)) {
+            const normalizedChar = normalizeWord(upperKey);
+
+            if (/^[A-Z]$/.test(normalizedChar)) {
                 setCurrentLetters((prev) => {
+                    const isFull = prev.every((c) => c !== '');
+                    if (isFull && cursorIndex === null) {
+                        return prev;
+                    }
+
                     const next = [...prev];
                     let insertIdx = cursorIndex;
 
                     if (insertIdx === null) {
                         const firstEmpty = next.findIndex((ch) => ch === '');
-                        insertIdx = firstEmpty !== -1 ? firstEmpty : 4;
+                        if (firstEmpty === -1) {
+                            return prev;
+                        }
+                        insertIdx = firstEmpty;
                     }
 
-                    next[insertIdx] = upperKey;
+                    next[insertIdx] = normalizedChar;
 
-                    let nextIdx: number | null = insertIdx + 1;
-                    if (nextIdx >= GAME_CONFIG.wordLength) {
-                        const hasEmpty = next.some((c) => c === '');
-                        nextIdx = hasEmpty ? next.findIndex((c) => c === '') : null;
+                    const firstEmpty = next.findIndex((ch) => ch === '');
+                    if (firstEmpty !== -1) {
+                        setCursorIndex(firstEmpty);
+                    } else {
+                        setCursorIndex(null);
                     }
 
-                    setCursorIndex(nextIdx);
                     return next;
                 });
             }
