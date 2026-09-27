@@ -11,7 +11,7 @@ export const GAME_CONFIG = {
     lexiconCdnUrl: 'https://cdn.jsdelivr.net/gh/fserb/pt-br@master/lexico',
     lexiconFallbackUrl: 'https://raw.githubusercontent.com/fserb/pt-br/master/lexico',
     messages: {
-        insufficientLetters: 'o encanto exige 5 runas',
+        insufficientLetters: 'o encanto exige 5  runas',
         wordNotFound: 'o abismo rejeita este vocábulo',
         victory: 'as almas foram subjugadas.',
         defeat: 'seu poder esvaiu-se nas sombras.',

@@ -31,7 +31,7 @@ export const Keyboard = ({ statusesMulti, boardsCount, onKeyPress }: KeyboardPro
     };
 
     return (
-        <div className="w-full max-w-[640px] flex flex-col gap-1.5 px-1 py-2 select-none shrink-0">
+        <div className="w-full max-w-[680px] flex flex-col gap-1.5 px-1 py-1 select-none shrink-0">
             <div className="flex justify-center gap-1 sm:gap-1.5 w-full">
                 {KEYBOARD_ROW_1.map((key) => {
                     const boardStatuses = statusesMulti[key] || Array(boardsCount).fill('empty');
@@ -41,7 +41,7 @@ export const Keyboard = ({ statusesMulti, boardsCount, onKeyPress }: KeyboardPro
                             type="button"
                             tabIndex={-1}
                             onClick={(e) => handleButtonClick(key, e)}
-                            className="relative overflow-hidden flex-1 flex items-center justify-center font-normal text-[10px] sm:text-xs border border-arcane-border rounded h-11 sm:h-13 transition-transform active:scale-95 cursor-pointer shadow-md"
+                            className="relative overflow-hidden flex-1 flex items-center justify-center font-bold text-sm sm:text-base md:text-lg border border-arcane-border rounded h-12 sm:h-14 transition-transform active:scale-95 cursor-pointer shadow-md"
                         >
                             <div className="absolute inset-0 flex pointer-events-none">
                                 {boardStatuses.map((st, i) => (
@@ -59,7 +59,7 @@ export const Keyboard = ({ statusesMulti, boardsCount, onKeyPress }: KeyboardPro
                 })}
             </div>
 
-            <div className="flex justify-center gap-1 sm:gap-1.5 w-full px-3 sm:px-4">
+            <div className="flex justify-center gap-1 sm:gap-1.5 w-full px-2 sm:px-3">
                 {KEYBOARD_ROW_2.map((key) => {
                     const boardStatuses = statusesMulti[key] || Array(boardsCount).fill('empty');
                     return (
@@ -68,7 +68,7 @@ export const Keyboard = ({ statusesMulti, boardsCount, onKeyPress }: KeyboardPro
                             type="button"
                             tabIndex={-1}
                             onClick={(e) => handleButtonClick(key, e)}
-                            className="relative overflow-hidden flex-1 flex items-center justify-center font-normal text-[10px] sm:text-xs border border-arcane-border rounded h-11 sm:h-13 transition-transform active:scale-95 cursor-pointer shadow-md"
+                            className="relative overflow-hidden flex-1 flex items-center justify-center font-bold text-sm sm:text-base md:text-lg border border-arcane-border rounded h-12 sm:h-14 transition-transform active:scale-95 cursor-pointer shadow-md"
                         >
                             <div className="absolute inset-0 flex pointer-events-none">
                                 {boardStatuses.map((st, i) => (
@@ -96,8 +96,10 @@ export const Keyboard = ({ statusesMulti, boardsCount, onKeyPress }: KeyboardPro
                             type="button"
                             tabIndex={-1}
                             onClick={(e) => handleButtonClick(key, e)}
-                            className={`relative overflow-hidden flex items-center justify-center font-normal text-[9px] sm:text-[11px] border border-arcane-border rounded h-11 sm:h-13 transition-transform active:scale-95 cursor-pointer shadow-md ${isSpecial ? 'flex-[1.5] px-1' : 'flex-1'
-                                }`}
+                            className={`relative overflow-hidden flex items-center justify-center font-bold ${isSpecial
+                                    ? 'text-xs sm:text-sm md:text-base flex-[1.4] px-1'
+                                    : 'text-sm sm:text-base md:text-lg flex-1'
+                                } border border-arcane-border rounded h-12 sm:h-14 transition-transform active:scale-95 cursor-pointer shadow-md`}
                         >
                             <div className="absolute inset-0 flex pointer-events-none">
                                 {boardStatuses.map((st, i) => (
@@ -108,7 +110,7 @@ export const Keyboard = ({ statusesMulti, boardsCount, onKeyPress }: KeyboardPro
                                 ))}
                             </div>
                             <span className="relative z-10 text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
-                                {key === 'BACKSPACE' ? <Delete className="w-4 h-4 sm:w-5 sm:h-5" /> : key}
+                                {key === 'BACKSPACE' ? <Delete className="w-5 h-5 sm:w-6 sm:h-6" /> : key}
                             </span>
                         </button>
                     );

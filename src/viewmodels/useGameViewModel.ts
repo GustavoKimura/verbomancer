@@ -26,11 +26,14 @@ export const useGameViewModel = (mode: GameMode) => {
 
     useEffect(() => {
         let mounted = true;
-        wordService.initialize().then(() => {
+        const minLoadingTime = new Promise((resolve) => setTimeout(resolve, 5000));
+
+        Promise.all([wordService.initialize(), minLoadingTime]).then(() => {
             if (mounted) {
                 setIsReady(true);
             }
         });
+
         return () => {
             mounted = false;
         };

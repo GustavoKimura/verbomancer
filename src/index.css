@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --font-pixel: "Pixelify Sans", sans-serif;
+  --font-pixel: "Silkscreen", monospace;
   --color-arcane-abyss: #0a0812;
   --color-arcane-surface: #151122;
   --color-arcane-card: #201933;
@@ -24,7 +24,6 @@
   outline: none;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
-  font-weight: 600;
 }
 
 button {
@@ -38,7 +37,7 @@ body,
   width: 100%;
   margin: 0;
   padding: 0;
-  font-family: 'Pixelify Sans', sans-serif;
+  font-family: 'Silkscreen', monospace;
   background-color: #0a0812;
   color: #ffffff;
   -webkit-font-smoothing: antialiased;
