@@ -2,7 +2,7 @@ export type GameMode = 'termo' | 'dueto' | 'quarteto';
 
 export type LetterStatus = 'empty' | 'tbd' | 'wrong' | 'place' | 'right';
 
-export interface TileData {
+export interface EvaluatedLetter {
     letter: string;
     status: LetterStatus;
 }
@@ -10,6 +10,7 @@ export interface TileData {
 export interface BoardState {
     id: string;
     targetWord: string;
+    targetNormalized: string;
     guesses: string[];
     maxRows: number;
     wordLength: number;
@@ -17,12 +18,6 @@ export interface BoardState {
     isFailed: boolean;
 }
 
-export interface DailyChallenge {
-    dayIndex: number;
-    dateKey: string;
-    modes: {
-        termo: string[];
-        dueto: string[];
-        quarteto: string[];
-    };
+export interface KeyStatusMap {
+    [key: string]: LetterStatus;
 }
