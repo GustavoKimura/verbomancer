@@ -3,10 +3,11 @@ interface NotificationProps {
 }
 
 export const Notification = ({ message }: NotificationProps) => {
-    if (!message) return null;
-
     return (
-        <div className="fixed top-12 left-1/2 -translate-x-1/2 z-50 px-5 py-2.5 bg-arcane-text text-arcane-abyss font-bold text-sm rounded shadow-[0_0_20px_rgba(199,125,255,0.5)] border-2 border-arcane-accent animate-bounce">
+        <div
+            className={`fixed top-32 left-1/2 -translate-x-1/2 z-50 px-6 py-2.5 bg-arcane-surface text-arcane-text font-bold text-sm sm:text-base rounded-md border border-arcane-accent shadow-[0_4px_24px_rgba(199,125,255,0.35)] transition-all duration-300 pointer-events-none ${message ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
+                }`}
+        >
             {message}
         </div>
     );

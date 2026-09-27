@@ -4,13 +4,25 @@ import { evaluateGuess } from '../services/evaluator';
 
 interface BoardProps {
     board: BoardState;
-    currentGuess: string;
+    currentLetters: string[];
+    cursorIndex: number | null;
     totalGuesses: number;
     mode: GameMode;
     isShaking: boolean;
+    animatingRowIndex: number | null;
+    onTileClick: (index: number) => void;
 }
 
-export const Board = ({ board, currentGuess, totalGuesses, mode, isShaking }: BoardProps) => {
+export const Board = ({
+    board,
+    currentLetters,
+    cursorIndex,
+    totalGuesses,
+    mode,
+    isShaking,
+    animatingRowIndex,
+    onTileClick,
+}: BoardProps) => {
     const isLocked = board.isSolved;
     const rows = [];
 
@@ -21,14 +33,24 @@ export const Board = ({ board, currentGuess, totalGuesses, mode, isShaking }: Bo
                 board.targetNormalized,
                 board.targetWord
             );
-            rows.push(<Row key={r} evaluation={evaluation} mode={mode} />);
+            const isCurrentlyRevealing = animatingRowIndex === r;
+            rows.push(
+                <Row
+                    key={r}
+                    evaluation={evaluation}
+                    mode={mode}
+                    isRevealing={isCurrentlyRevealing}
+                />
+            );
         } else if (r === board.guesses.length && !isLocked && totalGuesses === board.guesses.length) {
             rows.push(
                 <Row
                     key={r}
-                    currentLetters={currentGuess}
+                    currentLetters={currentLetters}
+                    cursorIndex={cursorIndex}
                     mode={mode}
                     isShaking={isShaking}
+                    onTileClick={onTileClick}
                 />
             );
         } else {
@@ -38,7 +60,7 @@ export const Board = ({ board, currentGuess, totalGuesses, mode, isShaking }: Bo
 
     return (
         <div
-            className={`flex flex-col gap-1 p-1.5 sm:p-2 rounded-lg border transition-all ${isLocked
+            className={`flex flex-col gap-1 p-2 sm:p-2.5 rounded-lg border transition-all ${isLocked
                 ? 'border-arcane-right/60 bg-arcane-card/40 shadow-[0_0_15px_rgba(0,230,118,0.15)]'
                 : 'border-arcane-border bg-arcane-surface/60'
                 }`}

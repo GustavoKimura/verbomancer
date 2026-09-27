@@ -1,11 +1,6 @@
 import { GAME_CONFIG } from '../config/game.config';
 import type { GameMode } from '../types/game';
 
-interface LexiconPayload {
-    targets: string[];
-    dictionary: string[];
-}
-
 export const normalizeWord = (word: string): string => {
     return word
         .normalize('NFD')
@@ -25,34 +20,90 @@ class WordService {
         if (this.loadPromise) return this.loadPromise;
 
         this.loadPromise = (async () => {
-            try {
-                const response = await fetch(GAME_CONFIG.wordDataSourceUrl);
-                const data: LexiconPayload = await response.json();
-
-                this.targets = data.targets;
-                const allWords = [...data.targets, ...data.dictionary];
-
-                allWords.forEach((word) => {
-                    const norm = normalizeWord(word);
-                    this.dictionarySet.add(norm);
-                    if (!this.originalMap.has(norm)) {
-                        this.originalMap.set(norm, word.toUpperCase());
-                    }
-                });
-
+            const cached = this.loadFromStorage();
+            if (cached) {
+                this.processWords(cached);
                 this.isLoaded = true;
-            } catch {
-                this.targets = ['TERMO', 'LIVRO', 'MAGIA', 'SAGAZ', 'NOBRE'];
-                this.targets.forEach((word) => {
-                    const norm = normalizeWord(word);
-                    this.dictionarySet.add(norm);
-                    this.originalMap.set(norm, word);
-                });
-                this.isLoaded = true;
+                return;
             }
+
+            try {
+                let text = '';
+                try {
+                    const res = await fetch(GAME_CONFIG.lexiconCdnUrl);
+                    if (res.ok) text = await res.text();
+                } catch {
+                    const resFallback = await fetch(GAME_CONFIG.lexiconFallbackUrl);
+                    if (resFallback.ok) text = await resFallback.text();
+                }
+
+                if (text) {
+                    const lines = text.split('\n');
+                    this.processWords(lines);
+                    this.saveToStorage(lines);
+                    this.isLoaded = true;
+                    return;
+                }
+            } catch {
+
+            }
+
+            const emergencyWords = [
+                'CARRO', 'TERMO', 'LIVRO', 'MAGIA', 'SAGAZ', 'NOBRE', 'PODER', 'TEMPO',
+                'MUNDO', 'VIVER', 'PORTA', 'CORPO', 'FESTA', 'SOLAR', 'LUNAR', 'VENTO',
+                'AREIA', 'FAROL', 'GRUPO', 'TURMA', 'VIOLA', 'PULGA', 'CHAVE', 'BRAVO',
+                'CORVO', 'TREVO', 'PRATA', 'CANTO', 'PEDRA', 'FLORA', 'FAUNA', 'TERRA',
+                'ASTRO', 'BRUXO', 'MAGOS', 'PACTO', 'ALMAS', 'RUNAS', 'CETRO', 'VAPOR',
+                'CALOR', 'FROTA', 'NAVIO', 'FARDO', 'TREZE', 'NORTE', 'LISTA', 'GOLPE'
+            ];
+            this.processWords(emergencyWords);
+            this.isLoaded = true;
         })();
 
         return this.loadPromise;
+    }
+
+    private processWords(words: string[]): void {
+        words.forEach((raw) => {
+            const trimmed = raw.trim();
+            if (trimmed.length === GAME_CONFIG.wordLength && !trimmed.includes(' ') && !trimmed.includes('-')) {
+                const norm = normalizeWord(trimmed);
+                this.dictionarySet.add(norm);
+                if (!this.originalMap.has(norm)) {
+                    this.originalMap.set(norm, trimmed.toUpperCase());
+                }
+                if (/^[a-zA-ZáàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ]+$/.test(trimmed)) {
+                    this.targets.push(trimmed.toUpperCase());
+                }
+            }
+        });
+
+        if (this.targets.length === 0) {
+            this.targets = Array.from(this.originalMap.values());
+        }
+    }
+
+    private loadFromStorage(): string[] | null {
+        try {
+            const raw = localStorage.getItem('verbomancer_lexicon_cache');
+            if (raw) {
+                return JSON.parse(raw);
+            }
+        } catch {
+            return null;
+        }
+        return null;
+    }
+
+    private saveToStorage(words: string[]): void {
+        try {
+            const fiveLetterOnly = words
+                .map((w) => w.trim())
+                .filter((w) => w.length === GAME_CONFIG.wordLength);
+            localStorage.setItem('verbomancer_lexicon_cache', JSON.stringify(fiveLetterOnly));
+        } catch {
+
+        }
     }
 
     public isValid(word: string): boolean {
@@ -65,7 +116,7 @@ class WordService {
 
     public getDailyWords(mode: GameMode, dayNumber: number): string[] {
         if (this.targets.length === 0) {
-            return ['TERMO'];
+            return ['CARRO'];
         }
 
         const config = GAME_CONFIG.modes[mode];
@@ -80,7 +131,7 @@ class WordService {
         const previousDayIndices = new Set<number>();
         if (dayNumber > 1) {
             for (let i = 0; i < wordsNeeded; i++) {
-                const prevSeed = (dayNumber - 1) * 31 + i * 17;
+                const prevSeed = (dayNumber - 1) * 73 + i * 29;
                 const prevIndex = Math.floor(pseudoRandom(prevSeed) * totalTargets);
                 previousDayIndices.add(prevIndex);
             }
@@ -90,13 +141,13 @@ class WordService {
         let salt = 0;
 
         while (selected.length < wordsNeeded) {
-            const seed = dayNumber * 31 + selected.length * 17 + salt;
+            const seed = dayNumber * 73 + selected.length * 29 + salt;
             const index = Math.floor(pseudoRandom(seed) * totalTargets);
 
-            if (!previousDayIndices.has(index) || salt > 100) {
-                const word = this.targets[index];
-                if (!selected.includes(word)) {
-                    selected.push(word);
+            if (!previousDayIndices.has(index) || salt > 200) {
+                const candidate = this.targets[index];
+                if (!selected.includes(candidate)) {
+                    selected.push(candidate);
                 }
             }
             salt++;

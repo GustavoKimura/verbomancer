@@ -1,5 +1,5 @@
 export interface ModeConfiguration {
-    id: 'sigilo' | 'dualidade' | 'cataclisma';
+    id: 'espectro' | 'sombras' | 'catacumba';
     name: string;
     boardsCount: number;
     maxRows: number;
@@ -8,29 +8,30 @@ export interface ModeConfiguration {
 export const GAME_CONFIG = {
     startDate: '2026-09-27T00:00:00',
     wordLength: 5,
-    wordDataSourceUrl: '/data/words.json',
+    lexiconCdnUrl: 'https://cdn.jsdelivr.net/gh/fserb/pt-br@master/lexico',
+    lexiconFallbackUrl: 'https://raw.githubusercontent.com/fserb/pt-br/master/lexico',
     messages: {
-        insufficientLetters: 'só palavras com 5 letras',
-        wordNotFound: 'essa palavra não é aceita',
-        victory: 'vitória extraordinária!',
-        defeat: 'o grimório foi selado.',
+        insufficientLetters: 'o encanto exige 5 runas',
+        wordNotFound: 'o abismo rejeita este vocábulo',
+        victory: 'as almas foram subjugadas.',
+        defeat: 'seu poder esvaiu-se nas sombras.',
     },
     modes: {
-        sigilo: {
-            id: 'sigilo',
-            name: 'SIGILO',
+        espectro: {
+            id: 'espectro',
+            name: 'ESPECTRO',
             boardsCount: 1,
             maxRows: 6,
         },
-        dualidade: {
-            id: 'dualidade',
-            name: 'DUALIDADE',
+        sombras: {
+            id: 'sombras',
+            name: 'SOMBRAS',
             boardsCount: 2,
             maxRows: 7,
         },
-        cataclisma: {
-            id: 'cataclisma',
-            name: 'CATACLISMA',
+        catacumba: {
+            id: 'catacumba',
+            name: 'CATACUMBA',
             boardsCount: 4,
             maxRows: 9,
         },

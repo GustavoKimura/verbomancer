@@ -9,9 +9,11 @@ import { loadGameProgress, saveGameProgress } from '../services/storage';
 export const useGameViewModel = (mode: GameMode) => {
     const [dayNumber, setDayNumber] = useState<number>(() => getDailyNumber());
     const [isReady, setIsReady] = useState<boolean>(false);
-    const [currentGuess, setCurrentGuess] = useState<string>('');
+    const [currentLetters, setCurrentLetters] = useState<string[]>(['', '', '', '', '']);
+    const [cursorIndex, setCursorIndex] = useState<number | null>(0);
     const [notification, setNotification] = useState<string | null>(null);
     const [isShaking, setIsShaking] = useState<boolean>(false);
+    const [animatingRowIndex, setAnimatingRowIndex] = useState<number | null>(null);
     const [targetWords, setTargetWords] = useState<string[]>([]);
 
     const config = GAME_CONFIG.modes[mode];
@@ -45,8 +47,10 @@ export const useGameViewModel = (mode: GameMode) => {
 
     useEffect(() => {
         setGuesses(loadGameProgress(mode, dayNumber));
-        setCurrentGuess('');
+        setCurrentLetters(['', '', '', '', '']);
+        setCursorIndex(0);
         setNotification(null);
+        setAnimatingRowIndex(null);
     }, [mode, dayNumber]);
 
     const normalizedTargets = useMemo(() => {
@@ -102,20 +106,24 @@ export const useGameViewModel = (mode: GameMode) => {
         setNotification(message);
         const timer = setTimeout(() => {
             setNotification((curr) => (curr === message ? null : curr));
-        }, 2000);
+        }, 3200);
         return () => clearTimeout(timer);
     }, []);
+
+    const currentGuessString = useMemo(() => {
+        return currentLetters.join('');
+    }, [currentLetters]);
 
     const submitGuess = useCallback(() => {
         if (isGameOver || !isReady) return;
 
-        if (currentGuess.length < GAME_CONFIG.wordLength) {
+        if (currentGuessString.length < GAME_CONFIG.wordLength) {
             showNotification(GAME_CONFIG.messages.insufficientLetters);
             triggerShake();
             return;
         }
 
-        const normalizedGuess = normalizeWord(currentGuess);
+        const normalizedGuess = normalizeWord(currentGuessString);
 
         if (!wordService.isValid(normalizedGuess)) {
             showNotification(GAME_CONFIG.messages.wordNotFound);
@@ -123,9 +131,13 @@ export const useGameViewModel = (mode: GameMode) => {
             return;
         }
 
+        const newRowIndex = guesses.length;
+        setAnimatingRowIndex(newRowIndex);
+
         const nextGuesses = [...guesses, normalizedGuess];
         setGuesses(nextGuesses);
-        setCurrentGuess('');
+        setCurrentLetters(['', '', '', '', '']);
+        setCursorIndex(0);
         saveGameProgress(mode, dayNumber, nextGuesses);
 
         const willBeSolved = boards.every((b) => {
@@ -137,8 +149,12 @@ export const useGameViewModel = (mode: GameMode) => {
         } else if (nextGuesses.length >= config.maxRows) {
             showNotification(GAME_CONFIG.messages.defeat);
         }
+
+        setTimeout(() => {
+            setAnimatingRowIndex(null);
+        }, 1200);
     }, [
-        currentGuess,
+        currentGuessString,
         isGameOver,
         isReady,
         guesses,
@@ -150,6 +166,22 @@ export const useGameViewModel = (mode: GameMode) => {
         triggerShake,
     ]);
 
+    const moveCursor = useCallback((direction: 'left' | 'right') => {
+        setCursorIndex((prev) => {
+            if (prev === null) {
+                return direction === 'right' ? 0 : GAME_CONFIG.wordLength - 1;
+            }
+            if (direction === 'left') {
+                return Math.max(0, prev - 1);
+            }
+            return Math.min(GAME_CONFIG.wordLength - 1, prev + 1);
+        });
+    }, []);
+
+    const handleTileClick = useCallback((index: number) => {
+        setCursorIndex(index);
+    }, []);
+
     const handleKeyPress = useCallback(
         (key: string) => {
             if (isGameOver || !isReady) return;
@@ -158,13 +190,60 @@ export const useGameViewModel = (mode: GameMode) => {
 
             if (upperKey === 'ENTER') {
                 submitGuess();
-            } else if (upperKey === 'BACKSPACE' || upperKey === 'DEL') {
-                setCurrentGuess((prev) => prev.slice(0, -1));
-            } else if (/^[A-Z]$/.test(upperKey) && currentGuess.length < GAME_CONFIG.wordLength) {
-                setCurrentGuess((prev) => prev + upperKey);
+                return;
+            }
+
+            if (upperKey === 'ARROWLEFT') {
+                moveCursor('left');
+                return;
+            }
+
+            if (upperKey === 'ARROWRIGHT') {
+                moveCursor('right');
+                return;
+            }
+
+            if (upperKey === 'BACKSPACE' || upperKey === 'DEL') {
+                setCurrentLetters((prev) => {
+                    const next = [...prev];
+                    const targetIdx = cursorIndex !== null ? cursorIndex : 4;
+
+                    if (next[targetIdx] !== '') {
+                        next[targetIdx] = '';
+                        setCursorIndex(targetIdx);
+                    } else if (targetIdx > 0) {
+                        next[targetIdx - 1] = '';
+                        setCursorIndex(targetIdx - 1);
+                    }
+                    return next;
+                });
+                return;
+            }
+
+            if (/^[A-Z]$/.test(upperKey)) {
+                setCurrentLetters((prev) => {
+                    const next = [...prev];
+                    let insertIdx = cursorIndex;
+
+                    if (insertIdx === null) {
+                        const firstEmpty = next.findIndex((ch) => ch === '');
+                        insertIdx = firstEmpty !== -1 ? firstEmpty : 4;
+                    }
+
+                    next[insertIdx] = upperKey;
+
+                    let nextIdx: number | null = insertIdx + 1;
+                    if (nextIdx >= GAME_CONFIG.wordLength) {
+                        const hasEmpty = next.some((c) => c === '');
+                        nextIdx = hasEmpty ? next.findIndex((c) => c === '') : null;
+                    }
+
+                    setCursorIndex(nextIdx);
+                    return next;
+                });
             }
         },
-        [currentGuess.length, isGameOver, isReady, submitGuess]
+        [cursorIndex, isGameOver, isReady, moveCursor, submitGuess]
     );
 
     useEffect(() => {
@@ -219,14 +298,17 @@ export const useGameViewModel = (mode: GameMode) => {
         dayNumber,
         isReady,
         boards,
-        currentGuess,
+        currentLetters,
+        cursorIndex,
         guesses,
         maxRows: config.maxRows,
         isGameOver,
         isGameWon,
         notification,
         isShaking,
+        animatingRowIndex,
         keyboardMultiStatuses,
         handleKeyPress,
+        handleTileClick,
     };
 };

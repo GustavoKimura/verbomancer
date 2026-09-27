@@ -1,4 +1,4 @@
-export type GameMode = 'sigilo' | 'dualidade' | 'cataclisma';
+export type GameMode = 'espectro' | 'sombras' | 'catacumba';
 
 export type LetterStatus = 'empty' | 'tbd' | 'wrong' | 'place' | 'right';
 
